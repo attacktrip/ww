@@ -1,1 +1,2 @@
-web: python -m site.backend.app
+web: python -m site/backend/app.py
+
