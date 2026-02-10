@@ -1,2 +1,3 @@
-web: python -m site/backend/app.py
+web: python site/backend/app.py
+
 
