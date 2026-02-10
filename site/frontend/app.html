@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Гарант-Бот</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <!-- Главное меню -->
+    <div id="main-menu" class="screen active">
+        <div class="container">
+            <div class="header">
+                <h1>Гарант-Бот</h1>
+            </div>
+            
+            <div class="menu-grid">
+                <button class="glass-card menu-btn" data-action="deals">
+                    <span class="icon" data-icon="deals"></span>
+                    <span class="text">Прошедшие сделки</span>
+                </button>
+                
+                <button class="glass-card menu-btn" data-action="profile">
+                    <span class="icon" data-icon="profile"></span>
+                    <span class="text">Профиль</span>
+                </button>
+                
+                <button class="glass-card menu-btn" data-action="about">
+                    <span class="icon" data-icon="about"></span>
+                    <span class="text">О нас</span>
+                </button>
+                
+                <button class="glass-card menu-btn" data-action="start-deal">
+                    <span class="icon" data-icon="deal"></span>
+                    <span class="text">Провести сделку</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Профиль -->
+    <div id="profile-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('main-menu')">
+                    <span class="icon" data-icon="back"></span>
+                    <span>Назад</span>
+                </button>
+                <h1>Профиль</h1>
+            </div>
+            
+            <div class="glass-card profile-info">
+                <div class="profile-item">
+                    <span class="label">ID</span>
+                    <span class="value" id="profile-id">-</span>
+                </div>
+                <div class="profile-item">
+                    <span class="label">Сделок</span>
+                    <span class="value" id="profile-offers">-</span>
+                </div>
+                <div class="profile-item">
+                    <span class="label">Баланс</span>
+                    <span class="value" id="profile-balance">-</span>
+                </div>
+                <div class="profile-item">
+                    <span class="label">СБП</span>
+                    <span class="value" id="profile-qiwi">-</span>
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <button class="glass-btn" onclick="showOutput()">
+                    <span class="icon" data-icon="output"></span>
+                    <span>Вывод средств</span>
+                </button>
+                <button class="glass-btn" onclick="showReplenish()">
+                    <span class="icon" data-icon="input"></span>
+                    <span>Пополнение баланса</span>
+                </button>
+                <button class="glass-btn" onclick="showUpdateQiwi()">
+                    <span class="icon" data-icon="save"></span>
+                    <span>Изменить счет</span>
+                </button>
+                <button class="glass-btn" onclick="updateLogin()">
+                    <span class="icon" data-icon="save"></span>
+                    <span>Обновить логин</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Прошедшие сделки -->
+    <div id="deals-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('main-menu')">
+                    <span class="icon" data-icon="back"></span>
+                    <span>Назад</span>
+                </button>
+                <h1>Прошедшие сделки</h1>
+            </div>
+            
+            <div class="role-selector">
+                <button class="glass-btn active" onclick="loadDeals('seller')">
+                    <span>Продавец</span>
+                </button>
+                <button class="glass-btn" onclick="loadDeals('customer')">
+                    <span>Покупатель</span>
+                </button>
+            </div>
+            
+            <div class="deals-list" id="deals-list"></div>
+        </div>
+    </div>
+
+    <!-- О нас -->
+    <div id="about-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('main-menu')">
+                    <span class="icon" data-icon="back"></span>
+                    <span>Назад</span>
+                </button>
+                <h1>О нас</h1>
+            </div>
+            
+            <div class="glass-card about-info" id="about-info">
+                <p>Загрузка...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Начать сделку -->
+    <div id="start-deal-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('main-menu')">
+                    <span class="icon" data-icon="back"></span>
+                    <span>Назад</span>
+                </button>
+                <h1>Провести сделку</h1>
+            </div>
+            
+            <div class="role-selector">
+                <button class="glass-btn active" onclick="selectDealRole('customer')">
+                    <span>Покупатель</span>
+                </button>
+                <button class="glass-btn" onclick="selectDealRole('seller')">
+                    <span>Продавец</span>
+                </button>
+            </div>
+            
+            <div class="input-group">
+                <input type="text" id="partner-username" placeholder="Введите логин пользователя (без @)" class="glass-input">
+                <button class="glass-btn" onclick="startDeal()">Начать сделку</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Карточка сделки -->
+    <div id="deal-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <button class="back-btn" onclick="loadDealInfo()">
+                    <span class="icon" data-icon="back"></span>
+                    <span>Назад</span>
+                </button>
+                <h1>Сделка</h1>
+            </div>
+            
+            <div class="glass-card deal-info" id="deal-info">
+                <p>Загрузка...</p>
+            </div>
+            
+            <div class="deal-actions" id="deal-actions"></div>
+        </div>
+    </div>
+
+    <!-- Вывод средств -->
+    <div id="output-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('profile-screen')">
+                    <span class="icon" data-icon="back"></span>
+                    <span>Назад</span>
+                </button>
+                <h1>Вывод средств</h1>
+            </div>
+            
+            <div class="glass-card">
+                <div class="info-text" id="output-info"></div>
+                <input type="number" id="output-amount" placeholder="Сумма для вывода" class="glass-input">
+                <button class="glass-btn" onclick="submitOutput()">Вывести</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Пополнение баланса -->
+    <div id="replenish-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('profile-screen')">
+                    <span class="icon" data-icon="back"></span>
+                    <span>Назад</span>
+                </button>
+                <h1>Пополнение баланса</h1>
+            </div>
+            
+            <div class="glass-card" id="replenish-info">
+                <p>Загрузка...</p>
+            </div>
+            
+            <div class="replenish-actions">
+                <button class="glass-btn" onclick="checkPayment()">
+                    <span class="icon" data-icon="check"></span>
+                    <span>Проверить оплату</span>
+                </button>
+                <button class="glass-btn secondary" onclick="cancelPayment()">
+                    <span class="icon" data-icon="cancel"></span>
+                    <span>Отмена</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Обновить СБП -->
+    <div id="update-qiwi-screen" class="screen">
+        <div class="container">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('profile-screen')">
+                    <span class="icon" data-icon="back"></span>
+                    <span>Назад</span>
+                </button>
+                <h1>Изменить счет</h1>
+            </div>
+            
+            <div class="glass-card">
+                <input type="text" id="qiwi-number" placeholder="+70000000000" class="glass-input">
+                <button class="glass-btn" onclick="submitQiwi()">
+                    <span class="icon" data-icon="save"></span>
+                    <span>Сохранить</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
+    <div id="modal" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2 id="modal-title">Уведомление</h2>
+                <button class="close-btn" onclick="closeModal()">
+                    <span class="icon" data-icon="close"></span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-footer" id="modal-footer"></div>
+        </div>
+    </div>
+
+    <!-- Индикатор загрузки -->
+    <div id="loader" class="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="js/icons.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
